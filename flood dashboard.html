@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สถานการณ์น้ำท่วม กรุงเทพและปทุมธานี</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      background: #f5f5f4;
+      color: #2c2c2a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #f5f5f4;
+      color: #2c2c2a;
+    }
+
+    .dashboard {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #fff 0%, #fafaf9 100%);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 0.5px solid #e1e0d9;
+    }
+
+    .header-left h1 {
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .header-left p {
+      font-size: 12px;
+      color: #898781;
+    }
+
+    .update-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #eaf3de;
+      color: #3b6d11;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .update-badge .dot {
+      width: 8px;
+      height: 8px;
+      background: #0ca30c;
+      border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 0.5px solid #e1e0d9;
+      border-radius: 8px;
+      padding: 1rem;
+      border-left: 4px solid #e24b4a;
+    }
+
+    .stat-card.warning {
+      border-left-color: #ba7517;
+    }
+
+    .stat-card.safe {
+      border-left-color: #0F6E56;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #898781;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 500;
+      color: #2c2c2a;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: #898781;
+      margin-top: 6px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      margin-top: 1.5rem;
+      color: #2c2c2a;
+    }
+
+    .location-card {
+      background: #fff;
+      border: 0.5px solid #e1e0d9;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 12px;
+    }
+
+    .location-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .location-name {
+      font-weight: 500;
+      font-size: 14px;
+      color: #2c2c2a;
+    }
+
+    .level-badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .badge-danger {
+      background: #fcebeb;
+      color: #a32d2d;
+    }
+
+    .badge-warning {
+      background: #faeeda;
+      color: #854f0b;
+    }
+
+    .badge-safe {
+      background: #eaf3de;
+      color: #3b6d11;
+    }
+
+    .water-level-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 8px;
+      color: #2c2c2a;
+    }
+
+    .water-level-bar {
+      width: 100%;
+      height: 10px;
+      background: #e1e0d9;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .water-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .fill-danger {
+      background: #e24b4a;
+    }
+
+    .fill-warning {
+      background: #ba7517;
+    }
+
+    .location-sub {
+      font-size: 12px;
+      color: #898781;
+    }
+
+    .forecast-card {
+      background: #fff;
+      border: 0.5px solid #e1e0d9;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .forecast-day {
+      margin-bottom: 12px;
+    }
+
+    .forecast-day:last-child {
+      margin-bottom: 0;
+    }
+
+    .forecast-day-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #2c2c2a;
+      margin-bottom: 4px;
+    }
+
+    .forecast-day-text {
+      font-size: 12px;
+      color: #898781;
+      line-height: 1.5;
+    }
+
+    .info-box {
+      background: #fafaf9;
+      border: 0.5px solid #e1e0d9;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 12px;
+      color: #898781;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-box strong {
+      color: #2c2c2a;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      background: transparent;
+      border: 0.5px solid #d3d1c7;
+      color: #2c2c2a;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #f5f5f4;
+      border-color: #b4b2a9;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: #378add;
+      color: white;
+      border-color: #378add;
+    }
+
+    .btn-primary:hover {
+      background: #185fa5;
+      border-color: #185fa5;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #898781;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 0.5px solid #e1e0d9;
+    }
+
+    .share-section {
+      background: linear-gradient(135deg, #e6f1fb 0%, #eef5fb 100%);
+      border: 0.5px solid #85b7eb;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .share-section h3 {
+      font-size: 13px;
+      font-weight: 500;
+      color: #185fa5;
+      margin-bottom: 8px;
+    }
+
+    .share-section p {
+      font-size: 12px;
+      color: #0c447c;
+      margin-bottom: 10px;
+    }
+
+    .share-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .share-btn {
+      background: white;
+      border: 0.5px solid #85b7eb;
+      color: #185fa5;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .share-btn:hover {
+      background: #e6f1fb;
+    }
+
+    .route-option {
+      background: #fafaf9;
+      border: 0.5px solid #e1e0d9;
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    .route-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+
+      .header-left {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="header">
+      <div class="header-left">
+        <h1>สถานการณ์น้ำท่วม 2569</h1>
+        <p>กรุงเทพฯ และปทุมธานี</p>
+      </div>
+      <div class="update-badge">
+        <span class="dot"></span>
+        <span>ปรับปรุง <span id="last-update">—</span></span>
+      </div>
+    </div>
+
+    <div class="share-section">
+      <h3>📤 แชร์ข้อมูลนี้ให้เพื่อน</h3>
+      <p>คัดลอกลิงค์และส่งให้เพื่อนๆ เพื่อติดตามสถานการณ์ร่วมกัน</p>
+      <div class="share-buttons">
+        <button class="share-btn" onclick="copyLink()">📋 คัดลอกลิงค์</button>
+        <button class="share-btn" onclick="shareWhatsApp()">💬 Line/WhatsApp</button>
+        <button class="share-btn" onclick="shareFacebook()">📘 Facebook</button>
+      </div>
+    </div>
+
+    <div class="status-grid">
+      <div class="stat-card">
+        <div class="stat-label">จังหวัดเสี่ยง</div>
+        <div class="stat-value" id="affected-count">2</div>
+        <div class="stat-sub">กรุงเทพ + ปทุมธานี</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ครัวเรือนติดน้ำ</div>
+        <div class="stat-value">30K+</div>
+        <div class="stat-sub">ประมาณ</div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-label">พื้นที่อุทกภัย</div>
+        <div class="stat-value">21</div>
+        <div class="stat-sub">จังหวัด</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ศูนย์พักพิง</div>
+        <div class="stat-value">5</div>
+        <div class="stat-sub">เปิดให้บริการ</div>
+      </div>
+    </div>
+
+    <div class="section-title">🚨 พื้นที่เสี่ยงสูง (วิกฤต)</div>
+    
+    <div class="location-card">
+      <div class="location-header">
+        <div class="location-name">ถนนวิภาวดีรังสิต (ขาเข้า)</div>
+        <span class="level-badge badge-danger">ปิด</span>
+      </div>
+      <div class="water-level-info">
+        <span>ระดับน้ำ</span>
+        <span style="font-weight: 500;">120+ ซม.</span>
+      </div>
+      <div class="water-level-bar">
+        <div class="water-fill fill-danger" style="width: 100%;"></div>
+      </div>
+      <div class="location-sub">❌ รถเล็กไม่ผ่านได้เลย | ⚠️ อพยพได้ยาก</div>
+    </div>
+
+    <div class="location-card">
+      <div class="location-header">
+        <div class="location-name">คลองรังสิตประยูรศักดิ์</div>
+        <span class="level-badge badge-danger">วิกฤต</span>
+      </div>
+      <div class="water-level-info">
+        <span>ระดับน้ำ</span>
+        <span style="font-weight: 500;">181 ซม.</span>
+      </div>
+      <div class="water-level-bar">
+        <div class="water-fill fill-danger" style="width: 95%;"></div>
+      </div>
+      <div class="location-sub">🏘️ เอ่อล้นท่วมบ้านเรือน | 👥 ผู้ป่วยติดเตียง 10+ ราย</div>
+    </div>
+
+    <div class="section-title">⚠️ พื้นที่เฝ้าระวัง</div>
+
+    <div class="location-card">
+      <div class="location-header">
+        <div class="location-name">ถนนพหลโยธิน (ช่วง 49/1)</div>
+        <span class="level-badge badge-warning">เฝ้าระวัง</span>
+      </div>
+      <div class="water-level-info">
+        <span>ระดับน้ำ</span>
+        <span style="font-weight: 500;">60+ ซม.</span>
+      </div>
+      <div class="water-level-bar">
+        <div class="water-fill fill-warning" style="width: 60%;"></div>
+      </div>
+      <div class="location-sub">🚗 รถจักรยานยนต์-รถยนต์เสียหาย 10+ คัน</div>
+    </div>
+
+    <div class="location-card">
+      <div class="location-header">
+        <div class="location-name">อ.ธัญบุรี (ตำบลประชาธิปัตย์)</div>
+        <span class="level-badge badge-warning">เฝ้าระวัง</span>
+      </div>
+      <div class="water-level-info">
+        <span>ระดับน้ำ</span>
+        <span style="font-weight: 500;">50+ ซม.</span>
+      </div>
+      <div class="water-level-bar">
+        <div class="water-fill fill-warning" style="width: 50%;"></div>
+      </div>
+      <div class="location-sub">🏘️ ประมาณ 90 ชุมชนติดน้ำ</div>
+    </div>
+
+    <div class="section-title">📅 พยากรณ์ 5 วันข้างหน้า</div>
+    
+    <div class="forecast-card">
+      <div class="forecast-day">
+        <div class="forecast-day-title">26-27 กันยายน 🌧️ หนัก</div>
+        <div class="forecast-day-text">ฝนยังตกหนัก ระดับน้ำเพิ่มขึ้นต่อเนื่อง เฝ้าระวัง</div>
+      </div>
+      <div class="forecast-day">
+        <div class="forecast-day-title">28-29 กันยายน ⛈️ เบาลง</div>
+        <div class="forecast-day-text">ฝนเริ่มลดลง แต่ยังมีบางพื้นที่ยังเสี่ยง</div>
+      </div>
+      <div class="forecast-day">
+        <div class="forecast-day-title">30 ก.ย. - 2 ตุลา ☀️ ปกติ</div>
+        <div class="forecast-day-text">ฝนเบาลง น้ำค่อยลดลง สถานการณ์ปรับตัว</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>💡 สิ่งที่ควรทำ</strong><br>
+      • หลีกเลี่ยงเส้นทางที่น้ำท่วม<br>
+      • ติดตามข้อมูล ปภ. เรื่องสถานที่พักพิง<br>
+      • ขับรถช้าๆ ในพื้นที่มีน้ำ<br>
+      • เก็บสิ่งของขึ้นที่สูง
+    </div>
+
+    <div class="info-box">
+      <strong>📞 เบอร์โทรฉุกเฉิน</strong><br>
+      • สถานีตำรวจ: 191<br>
+      • ศูนย์บัญชาการ สปภ.: 1300<br>
+      • เทศบาลนครรังสิต: 0-2966-7051
+    </div>
+
+    <div class="section-title">🗺️ ตัวช่วยวางแผนเส้นทาง</div>
+    
+    <div style="background: #fff; border: 0.5px solid #e1e0d9; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+      <p style="font-size: 13px; color: #2c2c2a; margin-bottom: 12px; font-weight: 500;">ออกจากฟิวเจอร์ปาร์ก ไป...</p>
+      
+      <div class="route-option">
+        <div class="route-header">
+          <div>
+            <div style="font-size: 13px; font-weight: 500; color: #2c2c2a; margin-bottom: 4px;">🏘️ ไปคลองสอง</div>
+            <div style="font-size: 11px; color: #898781;">ระยะ: ~5 กม. | เวลา: 15-25 นาที</div>
+          </div>
+          <span class="level-badge badge-warning" style="margin-top: 4px;">เฝ้าระวัง</span>
+        </div>
+        <div class="water-level-bar" style="margin: 10px 0;">
+          <div class="water-fill fill-warning" style="width: 45%;"></div>
+        </div>
+        <div style="font-size: 11px; color: #898781; margin-bottom: 8px;">
+          <strong style="color: #2c2c2a;">เส้นทางแนะนำ:</strong><br>
+          ถ.วิธยาเขต → ถ.พหลโยธิน → วัดพระธรรมกาย
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn" style="flex: 1; font-size: 11px;" onclick="openMap('Future Park Rangsit', 'Klong Song Watergate')">
+            📍 ดูแผนที่
+          </button>
+          <button class="btn" style="flex: 1; font-size: 11px;" onclick="showRouteDetails('klong-song')">
+            ℹ️ รายละเอียด
+          </button>
+        </div>
+      </div>
+
+      <div class="route-option" style="margin-top: 12px;">
+        <div class="route-header">
+          <div>
+            <div style="font-size: 13px; font-weight: 500; color: #2c2c2a; margin-bottom: 4px;">✈️ ไปสนามบินดอนเมือง</div>
+            <div style="font-size: 11px; color: #898781;">ระยะ: ~18 กม. | เวลา: 45-90 นาที</div>
+          </div>
+          <span class="level-badge badge-danger">เสี่ยง</span>
+        </div>
+        <div class="water-level-bar" style="margin: 10px 0;">
+          <div class="water-fill fill-danger" style="width: 70%;"></div>
+        </div>
+        <div style="font-size: 11px; color: #898781; margin-bottom: 8px;">
+          <strong style="color: #a32d2d;">⚠️ ขาด:</strong> ถ.วิภาวดี | ✓ ทางอื่น: ถ.จรัญสนิทวงศ์ (เสี่ยง) 
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn" style="flex: 1; font-size: 11px;" onclick="openMap('Future Park Rangsit', 'Don Mueang Airport')">
+            📍 ดูแผนที่
+          </button>
+          <button class="btn" style="flex: 1; font-size: 11px;" onclick="showRouteDetails('airport')">
+            ℹ️ รายละเอียด
+          </button>
+        </div>
+      </div>
+
+      <div style="background: #faeeda; border: 0.5px solid #e8c886; border-radius: 6px; padding: 10px; margin-top: 12px; font-size: 11px; color: #854f0b;">
+        <strong>⚠️ แนะนำสำคัญ:</strong> ควรเลิกเลี่ยงถ.วิภาวดีขาเข้า | ตรวจสอบสภาพเส้นทางเรียลไทม์ก่อนออกเดินทาง
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn" onclick="location.reload()">
+        🔄 รีเฟรช
+      </button>
+      <button class="btn btn-primary" onclick="openWarning()">
+        📺 ดูเตือนภัย
+      </button>
+    </div>
+
+    <div class="footer">
+      <p>ข้อมูลจาก: ศูนย์อุทกวิทยา | กรมอุตุนิยมวิทยา | เทศบาลนครรังสิต | ปภ.<br>
+      อัปเดตล่าสุด: <span id="footer-time">—</span></p>
+    </div>
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const timeStr = `${hours}:${mins}`;
+      document.getElementById('last-update').textContent = timeStr;
+      document.getElementById('footer-time').textContent = timeStr;
+    }
+
+    function copyLink() {
+      const link = window.location.href;
+      navigator.clipboard.writeText(link).then(() => {
+        alert('✅ คัดลอกลิงค์แล้ว!\n\n' + link);
+      }).catch(() => {
+        alert('ลิงค์: ' + link);
+      });
+    }
+
+    function shareWhatsApp() {
+      const text = 'ดูสถานการณ์น้ำท่วมกรุงเทพและปทุมธานีแบบ realtime: ' + window.location.href;
+      window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
+    }
+
+    function shareFacebook() {
+      window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
+    }
+
+    function openWarning() {
+      window.open('https://www.tmd.go.th/warning-and-events/warning-storm', '_blank');
+    }
+
+    function openMap(origin, destination) {
+      const googleMapsUrl = `https://www.google.com/maps/dir/${encodeURIComponent(origin)}/${encodeURIComponent(destination)}/`;
+      window.open(googleMapsUrl, '_blank');
+    }
+
+    function showRouteDetails(route) {
+      if (route === 'klong-song') {
+        alert(
+          '📍 เส้นทางไปคลองสอง\n\n' +
+          '🟡 สถานะ: เฝ้าระวัง (น้ำระดับกลาง)\n\n' +
+          '✓ เส้นทางแนะนำ:\n' +
+          '1. ถ.วิธยาเขต → เบิ่งไปซ้าย\n' +
+          '2. ถ.พหลโยธิน (อย่าไปถ.วิภาวดี)\n' +
+          '3. วัดพระธรรมกาย (จุดพยักษ์รถ)\n' +
+          '4. ตรงไปยังคลองสอง\n\n' +
+          '⏱️ เวลา: 15-25 นาที\n' +
+          '💧 ระดับน้ำ: 45-50 ซม.\n\n' +
+          '✅ ปลอดภัย: ผ่านได้ยาก\n' +
+          '⚠️ ระวัง: รถจักรยานยนต์อาจลุกเพลิง'
+        );
+      } else if (route === 'airport') {
+        alert(
+          '✈️ เส้นทางไปสนามบินดอนเมือง\n\n' +
+          '🔴 สถานะ: เสี่ยงมาก (เหนือติดน้ำ)\n\n' +
+          '❌ เส้นทางอันตราย:\n' +
+          '✗ ถ.วิภาวดี - ปิดสัญจรแล้ว\n' +
+          '✗ ถ.จรัญสนิทวงศ์ - น้ำท่วมสูง\n\n' +
+          '✓ เส้นทางเลี่ยง (ยาวขึ้น):\n' +
+          '1. ถ.พหลโยธิน → ยทร. 1\n' +
+          '2. ไปถ.สัตหีบ → ถ.ลาดพร้าว\n' +
+          '3. เข้าสนามบิน (60+ กม.)\n\n' +
+          '⏱️ เวลา: 45-90 นาที\n' +
+          '💧 ระดับน้ำ: 50-70 ซม.\n\n' +
+          '⚠️ คำแนะนำ: หากจำเป็น ไปตรวจสอบ\n' +
+          'สภาพเส้นทางก่อนประมาณ 2 ชั่วโมง'
+        );
+      }
+    }
+
+    updateTime();
+    setInterval(updateTime, 30000);
+  </script>
+</body>
+</html>
