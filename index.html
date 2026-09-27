@@ -528,8 +528,12 @@
         <div class="water-level-bar" style="margin: 10px 0;">
           <div class="water-fill fill-warning" style="width: 45%;"></div>
         </div>
-        <div style="font-size: 11px; color: #898781; margin-bottom: 8px;">
-          <strong style="color: #2c2c2a;">เส้นทางแนะนำ:</strong><br>
+        <div style="font-size: 11px; color: #898781; margin-bottom: 8px; background: #fff5e6; padding: 8px; border-radius: 4px;">
+          <strong style="color: #2c2c2a;">📊 ระดับน้ำตามเส้นทาง:</strong><br>
+          • วิธยาเขต: 25-30 ซม. 🟢<br>
+          • พหลโยธิน: 45-50 ซม. 🟡<br>
+          • คลองสอง: 40-45 ซม. 🟡<br><br>
+          <strong style="color: #2c2c2a;">✓ เส้นทางแนะนำ:</strong><br>
           ถ.วิธยาเขต → ถ.พหลโยธิน → วัดพระธรรมกาย
         </div>
         <div style="display: flex; gap: 8px;">
@@ -553,7 +557,12 @@
         <div class="water-level-bar" style="margin: 10px 0;">
           <div class="water-fill fill-danger" style="width: 70%;"></div>
         </div>
-        <div style="font-size: 11px; color: #898781; margin-bottom: 8px;">
+        <div style="font-size: 11px; color: #898781; margin-bottom: 8px; background: #fcebeb; padding: 8px; border-radius: 4px;">
+          <strong style="color: #a32d2d;">📊 ระดับน้ำตามเส้นทาง:</strong><br>
+          • พหลโยธิน: 60-70 ซม. 🔴<br>
+          • สัตหีบ: 35-45 ซม. 🟡<br>
+          • ลาดพร้าว: 30-40 ซม. 🟡<br>
+          • สนามบิน: 20-30 ซม. 🟢<br><br>
           <strong style="color: #a32d2d;">⚠️ ขาด:</strong> ถ.วิภาวดี | ✓ ทางอื่น: ถ.จรัญสนิทวงศ์ (เสี่ยง) 
         </div>
         <div style="display: flex; gap: 8px;">
@@ -561,6 +570,39 @@
             📍 ดูแผนที่
           </button>
           <button class="btn" style="flex: 1; font-size: 11px;" onclick="showRouteDetails('airport')">
+            ℹ️ รายละเอียด
+          </button>
+        </div>
+      </div>
+
+      <div class="route-option" style="margin-top: 12px;">
+        <div class="route-header">
+          <div>
+            <div style="font-size: 13px; font-weight: 500; color: #2c2c2a; margin-bottom: 4px;">🏠 บ้านกลางเมือง รัชดา36 → ✈️ สนามบินดอนเมือง</div>
+            <div style="font-size: 11px; color: #898781;">ระยะ: ~22 กม. | เวลา: 50-120 นาที</div>
+          </div>
+          <span class="level-badge badge-danger">เสี่ยง</span>
+        </div>
+        <div style="font-size: 11px; color: #898781; margin: 10px 0; background: #fcebeb; padding: 8px; border-radius: 4px;">
+          <strong style="color: #a32d2d;">📊 ระดับน้ำตามเส้นทาง:</strong><br>
+          • รัชดา: 30-40 ซม. 🟡<br>
+          • ท่าเรือ: 45-55 ซม. 🟡<br>
+          • พหลโยธิน: 60-70 ซม. 🔴<br>
+          • ตามน้ำ: 35-45 ซม. 🟡<br>
+          • สนามบิน: 20-30 ซม. 🟢
+        </div>
+        <div style="font-size: 11px; color: #898781; margin-bottom: 8px;">
+          <strong style="color: #2c2c2a;">❌ หลีกเลี่ยง:</strong> ถ.วิภาวดี, ถ.พัฒนาการ (น้ำท่วม)<br>
+          <strong style="color: #2c2c2a;">✓ เส้นทางแนะนำ:</strong><br>
+          1. รัชดา → ถ.สุขุมวิท 101 (ตลาดนอย)<br>
+          2. ตรง → ถ.ส.5 → ถ.ตามน้ำ<br>
+          3. → ยทร.9 → สนามบิน
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn" style="flex: 1; font-size: 11px;" onclick="openMap('Baan Klang Muang Ratchada 36', 'Don Mueang Airport')">
+            📍 ดูแผนที่
+          </button>
+          <button class="btn" style="flex: 1; font-size: 11px;" onclick="showRouteDetails('ratchada-airport')">
             ℹ️ รายละเอียด
           </button>
         </div>
@@ -640,7 +682,7 @@
         );
       } else if (route === 'airport') {
         alert(
-          '✈️ เส้นทางไปสนามบินดอนเมือง\n\n' +
+          '✈️ เส้นทางไปสนามบินดอนเมือง (ฟิวเจอร์ปาร์ก)\n\n' +
           '🔴 สถานะ: เสี่ยงมาก (เหนือติดน้ำ)\n\n' +
           '❌ เส้นทางอันตราย:\n' +
           '✗ ถ.วิภาวดี - ปิดสัญจรแล้ว\n' +
@@ -653,6 +695,25 @@
           '💧 ระดับน้ำ: 50-70 ซม.\n\n' +
           '⚠️ คำแนะนำ: หากจำเป็น ไปตรวจสอบ\n' +
           'สภาพเส้นทางก่อนประมาณ 2 ชั่วโมง'
+        );
+      } else if (route === 'ratchada-airport') {
+        alert(
+          '🏠→✈️ จาก บ้านกลางเมือง รัชดา36 → สนามบินดอนเมือง\n\n' +
+          '🔴 สถานะ: เสี่ยง (พหลโยธินติดน้ำหนัก)\n\n' +
+          '📊 ระดับน้ำตามเส้นทาง:\n' +
+          '• รัชดา (เริ่ม): 30-40 ซม. 🟡\n' +
+          '• ถ.ท่าเรือ: 45-55 ซม. 🟡\n' +
+          '• ถ.พหลโยธิน: 60-70 ซม. 🔴\n' +
+          '• ถ.ตามน้ำ: 35-45 ซม. 🟡\n' +
+          '• สนามบิน: 20-30 ซม. 🟢\n\n' +
+          '✓ เส้นทางแนะนำ:\n' +
+          '1. รัชดา → ส.5 (ตลาดนอย)\n' +
+          '2. → ถ.สุขุมวิท 101\n' +
+          '3. → ถ.ตามน้ำ → ยทร.9\n' +
+          '4. → สนามบิน\n\n' +
+          '⏱️ เวลา: 50-120 นาที\n' +
+          '❌ หลีกเลี่ยง: วิภาวดี, พัฒนาการ\n' +
+          '⚠️ พหลโยธินอันตรายสุด (60-70 ซม.)'
         );
       }
     }
